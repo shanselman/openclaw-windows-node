@@ -178,6 +178,21 @@ public sealed class UpdateBackendLoaderTests
         }
     }
 
+    [Fact]
+    public void ApprovedReleaseIsPinnedWithNoAwaitBeforeTheDownloadReadsIt()
+    {
+        // Retirement: replace with a coordinator test that overlaps two checks around an open prompt.
+        var coordinator = File.ReadAllText(Path.Combine(
+            TestRepositoryPaths.GetRepositoryRoot(), "src", "OpenClaw.Tray.WinUI", "Services", "UpdateCoordinator.cs"));
+
+        Assert.Contains("approvedRelease = release;", coordinator);
+        Assert.Contains("await DownloadAndInstallUpdateAsync(updater, approvedRelease)", coordinator);
+        var pin = coordinator.IndexOf("approvedRelease.Activate();", StringComparison.Ordinal);
+        var download = coordinator.IndexOf("return await updater.DownloadAndInstallAsync(", StringComparison.Ordinal);
+        Assert.InRange(pin, 1, download - 1);
+        Assert.DoesNotContain("await", coordinator[pin..download]);
+    }
+
     private sealed class BlockedAssemblyException : FileLoadException
     {
         public BlockedAssemblyException() : base("Windows blocked the updater", "Updatum.dll") =>

@@ -115,7 +115,9 @@ most recent releases (GitHub's page maximum; Updatum reads 30 by default) for
 alpha checks. The pipeline orders compatible alpha, final and
 correction tags through `OpenClawReleaseVersion`, then activates the selected
 release in the existing backend so its notes and installation use that release.
-Store, development and Debug admission remains unchanged.
+`UpdateCoordinator` activates the approved release again immediately before the
+download, so a later check that finishes while the prompt is open cannot change
+what is installed. Store, development and Debug admission remains unchanged.
 
 | Concern | Canonical owner | Status |
 | --- | --- | --- |

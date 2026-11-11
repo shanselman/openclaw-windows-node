@@ -116,6 +116,7 @@ internal sealed class UpdateCoordinator(
 #else
         string releaseTag;
         string changelog;
+        UpdateReleaseCandidate approvedRelease;
         IUpdateBackend updater;
         try
         {
@@ -193,6 +194,7 @@ internal sealed class UpdateCoordinator(
             }
 
             releaseTag = release.TagName;
+            approvedRelease = release;
             changelog = updater.GetChangelog() ?? "No release notes available.";
             Logger.Info($"Update available: {releaseTag}");
             appState.UpdateInfo = new UpdateCommandCenterInfo
@@ -318,7 +320,7 @@ internal sealed class UpdateCoordinator(
                     _settings.SkippedUpdateTag = string.Empty;
                     _settings.Save();
                 }
-                var installed = await DownloadAndInstallUpdateAsync(updater);
+                var installed = await DownloadAndInstallUpdateAsync(updater, approvedRelease);
                 if (!installed && _updaterLoader.Failure is null)
                 {
                     appState.UpdateInfo = new UpdateCommandCenterInfo
@@ -575,7 +577,9 @@ internal sealed class UpdateCoordinator(
         }
     }
 
-    private async Task<bool> DownloadAndInstallUpdateAsync(IUpdateBackend updater)
+    private async Task<bool> DownloadAndInstallUpdateAsync(
+        IUpdateBackend updater,
+        UpdateReleaseCandidate approvedRelease)
     {
         DownloadProgressDialog? progressDialog = null;
         try
@@ -583,6 +587,10 @@ internal sealed class UpdateCoordinator(
             progressDialog = new DownloadProgressDialog();
             progressDialog.ShowAsync(); // Fire and forget
 
+            // The prompt can stay open while a later check replaces the updater's
+            // selected release. Pin the one the user approved. Nothing may suspend
+            // between this call and the download's read of the selection.
+            approvedRelease.Activate();
             return await updater.DownloadAndInstallAsync(() => TryCloseProgressDialog(progressDialog));
         }
         catch (Exception ex) when (UpdateBackendLoader.IsDependencyFailure(ex))

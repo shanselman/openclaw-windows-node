@@ -552,6 +552,52 @@
         }
       ],
       "expectedSelectedTag": null
+    },
+    {
+      "name": "backend-pick-matching-alpha-winner-is-not-reactivated",
+      "current": "2026.9.5-alpha.97",
+      "channel": "alpha",
+      "releases": [
+        {
+          "tag": "v2026.9.9-alpha.2",
+          "prerelease": true,
+          "draft": false,
+          "published": true,
+          "trustedMetadata": true,
+          "body": "<!-- openclaw-update: ordinary -->",
+          "asset": {
+            "id": "v2026.9.9-alpha.2-x64",
+            "name": "OpenClawTray-2026.9.9-alpha.2-win-x64.zip",
+            "compatible": true,
+            "url": "https://example.invalid/no-download"
+          }
+        }
+      ],
+      "expectedSelectedTag": "v2026.9.9-alpha.2",
+      "backendFound": true,
+      "backendSelectedTag": "v2026.9.9-alpha.2"
+    },
+    {
+      "name": "newer-base-beta-prerelease-is-not-read-as-alpha",
+      "current": "2026.9.5-alpha.9",
+      "channel": "alpha",
+      "releases": [
+        {
+          "tag": "v2026.9.7-beta.2",
+          "prerelease": true,
+          "draft": false,
+          "published": true,
+          "trustedMetadata": true,
+          "body": "<!-- openclaw-update: ordinary -->",
+          "asset": {
+            "id": "v2026.9.7-beta.2-x64",
+            "name": "OpenClawTray-2026.9.7-beta.2-win-x64.zip",
+            "compatible": true,
+            "url": "https://example.invalid/no-download"
+          }
+        }
+      ],
+      "expectedSelectedTag": null
     }
   ]
 }
