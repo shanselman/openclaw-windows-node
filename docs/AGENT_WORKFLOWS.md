@@ -4,6 +4,47 @@ Use this guide when changing repository instructions, skill routing, validation
 planning, or evidence interpretation. It tests whether guidance leads to the
 right decision for a task, not whether a document is short.
 
+## Finish authorized landing work
+
+Use this workflow when the operator asks to test, fix and land a batch of small
+changes. A read-only triage or review request remains read-only. The root
+[working agreement](../AGENTS.md#working-agreement) owns authorization; this
+guide does not grant permission to publish or merge.
+
+Start with a small queue of independently landable, non-draft candidates, not
+an exhaustive review of every open item. Record the latest operator grant,
+its scope and conditions, the current repository rules, and the next concrete
+step for each candidate. Do not invent a blanket ban on merging self-authored
+PRs: explicit merge authority can include them, but never substitutes for
+required independent review, checks, proof or GitHub approvals.
+
+For each candidate, identify the production owner, the regression and the
+smallest sufficient proof using [test selection](TEST_COVERAGE.md). Reuse
+recorded tests and reviews only while their source identity, scope and relevant
+base behavior still match. Label them as earlier evidence, not newly executed
+validation. Recheck the live head, required checks, review dispositions and
+mergeability immediately before landing.
+
+Resolve concrete review findings rather than repeating reviews to obtain a
+more favorable verdict. Do not invent numeric confidence thresholds. A changed
+candidate needs reassessment of the affected evidence, not an automatic restart
+of every review. Distinguish mandatory proof from optional improvements; collect
+missing proof with authorized tools when feasible instead of automatically
+assigning it back to the human. Never weaken a required check to improve throughput.
+
+Time-box candidate investigation, not mandatory validation. Park a candidate
+with its specific blocker if it expands into a redesign, unavailable proof or a
+human-only decision, then finish another independent candidate. For CI failures,
+follow the [failure-triage route](../.agents/skills/retrigger-flaky-ci/SKILL.md);
+repeated identical infrastructure failures without new evidence are not a reason
+to keep rerunning.
+
+At progress checkpoints, report verified landings and elapsed time since the
+last merge, not comment counts or PRs opened as substitutes. If repeated reads,
+reviews or reruns produce no new evidence, change the approach before expanding
+the queue. Preserve useful patches and exact blockers when stopping. Keep
+private run history in session artifacts and reusable lessons in this guide.
+
 ## Check host and tool readiness
 
 ```powershell
@@ -204,6 +245,8 @@ or executing destructive commands.
 | Custom proof has passing and skipped cases | Reject complete custom proof; keep the individual results and blocker explicit |
 | Reuse a screenshot from an older source/binary | Reject current-head proof unless its actual provenance still matches the asserted state |
 | Review one named PR | Stay on the named item and necessary dependencies; no full sweep, GitHub mutation, or publication |
+| Land a self-authored PR with explicit operator authority | Check the grant and live repository requirements; preserve required independent review and proof, but do not invent a human-only merge gate |
+| A landing run produces repeated comments and reruns but no merges | Check elapsed time and concrete blockers, finish or park the current candidates, and avoid expanding the queue without new evidence |
 | Simplify my own completed Windows-node change before a PR | Use [PR simplification](../.agents/skills/pr-simplify/SKILL.md), preserve distinct WinUI, package, Gateway/WSL, command, installer and architecture contracts, then reprove the reduced diff |
 | Open a PR for my change, or write its description | Use [Windows PR preparation](../.agents/skills/windows-pr-prepare/SKILL.md), write the body locally, and publish only when explicitly authorized; a missing required source or rubber-duck review remains blocked |
 | Retrigger CI on my PR | Use [retrigger-flaky-ci](../.agents/skills/retrigger-flaky-ci/SKILL.md): read the failed logs first; warn without rerunning when a failure traces to the PR's changes; otherwise summarize and rerun only the failed jobs |
