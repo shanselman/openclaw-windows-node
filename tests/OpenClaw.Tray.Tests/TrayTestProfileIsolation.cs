@@ -8,7 +8,8 @@ namespace OpenClaw.Tray.Tests;
 /// Keeps a plain <c>dotnet test</c> out of the developer's real Companion profile. Production code
 /// falls back to %APPDATA% and %LOCALAPPDATA% when these overrides are unset, so without this a run
 /// writes fixture logs, chat state and a device key beside a real installation. Values the caller
-/// already set, as CI does, are kept.
+/// already set, as CI does, are kept. An inherited update-channel opt-in is dropped instead, because
+/// the update pipeline reads it and an alpha value would change what the update tests exercise.
 /// </summary>
 internal static class TrayTestProfileIsolation
 {
@@ -25,6 +26,7 @@ internal static class TrayTestProfileIsolation
     {
         var root = Path.Combine(Path.GetTempPath(), "OpenClawTrayTests-" + Guid.NewGuid().ToString("N"));
         SetMissingOverrides(root);
+        Environment.SetEnvironmentVariable("OPENCLAW_UPDATE_CHANNEL", null);
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {

@@ -110,8 +110,9 @@ new attempt. This boundary does not change release signing or Windows policy.
 
 `UpdateCheckPipeline` reads the existing `OPENCLAW_UPDATE_CHANNEL` opt-in.
 Only `alpha` enables prereleases; unset, stable and unsupported values retain
-stable discovery. `UpdatumUpdateBackend` uses that same policy to fetch all
-releases for alpha checks. The pipeline orders compatible alpha, final and
+stable discovery. `UpdatumUpdateBackend` uses that same policy to fetch the 100
+most recent releases (GitHub's page maximum; Updatum reads 30 by default) for
+alpha checks. The pipeline orders compatible alpha, final and
 correction tags through `OpenClawReleaseVersion`, then activates the selected
 release in the existing backend so its notes and installation use that release.
 Store, development and Debug admission remains unchanged.

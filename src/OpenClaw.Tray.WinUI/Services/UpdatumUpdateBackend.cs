@@ -9,6 +9,9 @@ namespace OpenClawTray.Services;
 
 internal sealed class UpdatumUpdateBackend : IUpdateBackend
 {
+    // Updatum reads a single page of 30 releases. 100 is GitHub's per-page maximum.
+    private const int AlphaChannelReleasePageSize = 100;
+
     private readonly UpdatumManager _updater = new("openclaw", "openclaw-windows-node")
     {
         FetchOnlyLatestRelease = true,
@@ -20,6 +23,8 @@ internal sealed class UpdatumUpdateBackend : IUpdateBackend
         var allowAlpha = UpdateCheckPipeline.IsAlphaChannelEnabled;
         _updater.FetchOnlyLatestRelease = !allowAlpha;
         _updater.AllowPreReleases = allowAlpha;
+        if (allowAlpha)
+            UpdatumManager.GitHubApiOptions.PageSize = AlphaChannelReleasePageSize;
         return _updater.CheckForUpdatesAsync();
     }
 
